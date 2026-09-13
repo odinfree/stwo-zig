@@ -122,7 +122,11 @@ jobs:
           echo "26b59bcab2d66e9f220d317dfe45f8b09170ed70e59a824553d6f525134d1ff6  $RUNNER_TEMP/sail.tar.gz" \
             | sha256sum -c -
           tar -xzf "$RUNNER_TEMP/sail.tar.gz" -C "$RUNNER_TEMP"
-          "$RUNNER_TEMP/sail/bin/sail" --version
+          # The pinned release includes its matching Z3 binary beside Sail.
+          # Put that directory on PATH for this probe and all later steps.
+          SAIL_BIN="$RUNNER_TEMP/sail/bin"
+          echo "$SAIL_BIN" >> "$GITHUB_PATH"
+          PATH="$SAIL_BIN:$PATH" "$SAIL_BIN/sail" --version
 
       - name: Run the fail-closed Sail/Spike differential gate
         run: |
